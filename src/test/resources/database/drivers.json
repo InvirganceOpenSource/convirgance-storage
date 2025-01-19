@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Oracle Thin Driver",
+        "keys": [
+            "oracle",
+            "ora",
+            "oracledb"
+        ],
+        "artifact": [
+            "com.oracle.database.jdbc:ojdbc11:23.6.0.24.10"
+        ],
+        "driver": "oracle.jdbc.driver.OracleDriver",
+        "datasource": "oracle.jdbc.pool.OracleDataSource",
+        "prefixes": [
+            "jdbc:oracle:thin:"
+        ],
+        "examples": [
+            "jdbc:oracle:thin:@[HOST][:PORT]:SID",
+            "jdbc:oracle:thin:@//[HOST][:PORT]/SERVICE"
+        ]
+    },
+    {
+        "name": "Derby Network Client",
+        "keys": [
+            "derby",
+            "javadb"
+        ],
+        "artifact": [
+            "org.apache.derby:derbytools:10.17.1.0",
+            "org.apache.derby:derbyclient:10.17.1.0"
+        ],
+        "driver": "org.apache.derby.jdbc.ClientDriver",
+        "datasource": "com.invirgance.virge.jdbc.DriverDataSource",
+        "prefixes": [
+            "jdbc:derby:"
+        ],
+        "examples": [
+            "jdbc:derby://<host>[/databaseName][;attribute=value]",
+            "jdbc:derby:[subsubprotocol:][databaseName][;attribute=value]",
+            "jdbc:derby:directory:[databaseName][;attribute=value]",
+            "jdbc:derby:memory:[databaseName][;attribute=value]",
+            "jdbc:derby:classpath:[databaseName][;attribute=value]",
+            "jdbc:derby:jar:<pathToArchive>/<databaseName>[;attribute=value]"
+        ]
+    },
+    {
+        "name": "SQL Server (jTDS)",
+        "keys": [
+            "sqlserver",
+            "jtds",
+            "tds",
+            "microsoft"
+        ],
+        "artifact": [
+            "net.sourceforge.jtds:jtds:1.3.1"
+        ],
+        "driver": "net.sourceforge.jtds.jdbc.Driver",
+        "datasource": "com.invirgance.virge.jdbc.DriverDataSource",
+        "prefixes": [
+            "jdbc:jtds:"
+        ],
+        "examples": [
+            "jdbc:jtds:sqlserver://<server>[:<port>][/<database>][;<property>=<value>[;...]]"
+        ]
+    },
+    {
+        "name": "HSQLDB",
+        "keys": [
+            "hsql",
+            "hsqldb",
+            "hypersonic",
+            "hypersonicsql"
+        ],
+        "artifact": [
+            "org.hsqldb:hsqldb:2.7.4"
+        ],
+        "driver": "org.hsqldb.jdbc.JDBCDriver",
+        "datasource": "org.hsqldb.jdbc.JDBCDataSource",
+        "prefixes": [
+            "jdbc:hsqldb:"
+        ],
+        "examples": [
+            "jdbc:hsqldb:hsql://<serverName>[:port][/databaseName]",
+            "jdbc:hsqldb:hsqls://<serverName>[:port][/databaseName]",
+            "jdbc:hsqldb:http://<serverName>[:port][/databaseName]",
+            "jdbc:hsqldb:https://<serverName>[:port][/databaseName]",
+            "jdbc:hsqldb:file:/<directory>[;shutdown=true]",
+            "jdbc:hsqldb:res:/<jarDirectory>"
+        ]
+    }
+]
