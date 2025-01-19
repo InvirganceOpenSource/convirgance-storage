@@ -30,7 +30,19 @@ import com.invirgance.convirgance.target.Target;
 import java.io.*;
 
 /**
- *
+ * Provides access to a local filesystem file for reading and atomic writes. When
+ * the file is updated, data is first written to a temporary location. Once the
+ * data is successfully written and the stream is closed, the temporary file is
+ * swapped with the previous file version.
+ * 
+ * A backup is kept of the previous version in case the swap fails. In such a
+ * case the older revision will be detected and restored when the AtomicFile 
+ * object is constructed.
+ * 
+ * Note that the atomic nature of the file makes simultaneous reads and writes
+ * possible, making AtomicFile ideal for updates where data is streamed and 
+ * manipulated while being written.
+ * 
  * @author jbanes
  */
 public class AtomicFile
@@ -39,11 +51,23 @@ public class AtomicFile
     private final File temp;
     private final File old;
 
+    /**
+     * Access the specified filename in the given directory.
+     * 
+     * @param parent The parent directory of the file
+     * @param filename The name of the file to operate on atomically
+     */
     public AtomicFile(File parent, String filename)
     {
         this(new File(parent, filename));
     }
     
+    /**
+     * Access the specified file. The file must be a regular file and not a
+     * directory, link, symlink, or other special file.
+     * 
+     * @param file The underlying file to operate on atomically
+     */
     public AtomicFile(File file)
     {
         String root = file.getName();
@@ -62,20 +86,43 @@ public class AtomicFile
         }
     }
 
+    /**
+     * Return a reference to the underlying file
+     * 
+     * @return Reference to the underlying file 
+     */
     public File getFile()
     {
         return file;
     }
+    
+    /**
+     * Checks if the underlying file exists
+     * 
+     * @return true if the underlying file exists, false otherwise
+     */
     public boolean exists()
     {
         return file.exists();
     }
     
+    /**
+     * Obtains a Convirgance Source for accessing the AtomicFile data
+     * 
+     * @return a Convirgance Source for reading the AtomicFile data
+     */
     public Source getSource()
     {
         return new FileSource(file);
     }
     
+    /**
+     * Obtains a Convirgance Target for writing to the AtomicFile. The Target
+     * writes to a temporary location until the underlying stream is closed. As
+     * soon as the stream is closed, the temporary data is swapped in.
+     * 
+     * @return a Convirgance Target for writing to the AtomicFile
+     */
     public Target getTarget()
     {
         return new Target() {
@@ -95,11 +142,23 @@ public class AtomicFile
         };
     }
     
+    /**
+     * Obtains a DataInputStream for accessing the AtomicFile data
+     * 
+     * @return a DataInputStream for reading the AtomicFile data
+     */
     public DataInputStream getInput() throws IOException
     {
         return new DataInputStream(new FileInputStream(this.file));
     }
     
+    /**
+     * Obtains a DataOutputStream for writing to the AtomicFile. The Target
+     * writes to a temporary location until the stream is closed. As
+     * soon as the stream is closed, the temporary data is swapped in.
+     * 
+     * @return a DataOutputStream for writing to the AtomicFile
+     */
     public DataOutputStream getOutput() throws IOException
     {
         return new SwappableDataOutputStream();
