@@ -30,9 +30,7 @@ import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.output.JSONOutput;
 import com.invirgance.convirgance.output.OutputCursor;
-import com.invirgance.convirgance.source.InputStreamSource;
 import com.invirgance.convirgance.source.Source;
-import com.invirgance.convirgance.target.OutputStreamTarget;
 import com.invirgance.convirgance.transform.filter.Filter;
 import com.invirgance.convirgance.transform.sets.UnionIterable;
 import java.io.*;
@@ -41,7 +39,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * Sophisticated database of configuration records that can be easily inserted,
+ * updated, and read. A default file can be used to seed the configuration data.
+ * This default data can be deleted, overwritten, and updated without affecting
+ * the underlying source of the default data.
+ * 
+ * Note that the data is stored as a file called "config.json" in the chosen
+ * directory. The data is in JSON format to make it easy to read and modify if so 
+ * desired.
+ * 
  * @author jbanes
  */
 public class Config implements Iterable<JSONObject>
@@ -56,11 +62,34 @@ public class Config implements Iterable<JSONObject>
     private AtomicFile file;
     private AtomicFile deleted;
     
+    /**
+     * Access a configuration database without any default data. Records are
+     * determined to be unique based on the primaryKey. The primary key does
+     * not have to be a specific data type, only unique across records.
+     * 
+     * @param directory where to store the configuration data
+     * @param primaryKey the key name of the primary key (e.g. id)
+     */
     public Config(File directory, String primaryKey)
     {
         this(null, directory, primaryKey);
     }
     
+    /**
+     * Access a configuration database, pulling default data from the specified
+     * source. Records are determined to be unique based on the primaryKey. The 
+     * primary key does not have to be a specific data type, only unique across 
+     * records. The default data source must have the primary key in its data.
+     * 
+     * A common use case would be to store the default configuration data in the
+     * project's classpath and use a ClasspathSource to access the data. This 
+     * allows for intelligent "defaults" that can then be overridden once the 
+     * app is in use.
+     * 
+     * @param source file containing default configuration data
+     * @param directory where to store the configuration data
+     * @param primaryKey the key name of the primary key (e.g. id)
+     */
     public Config(Source source, File directory, String primaryKey)
     {
         this.source = source;
@@ -73,16 +102,31 @@ public class Config implements Iterable<JSONObject>
         this.deleted = new AtomicFile(directory, "deleted.idx");
     }
 
+    /**
+     * Obtain the key name used to determine record uniqueness
+     * 
+     * @return the primary key name
+     */
     public String getPrimaryKey()
     {
         return primaryKey;
     }
 
+    /**
+     * Obtain the default data source provided when this object was created
+     * 
+     * @return the default data source if set, otherwise null
+     */
     public Source getSource()
     {
         return source;
     }
 
+    /**
+     * Obtain the directory in which the configuration data will be stored
+     * 
+     * @return the configuration database directory
+     */
     public File getDirectory()
     {
         return directory;
@@ -177,6 +221,12 @@ public class Config implements Iterable<JSONObject>
         return getData().iterator();
     }
     
+    /**
+     * Delete the record that has the specified primary key. If the key is not
+     * found in any of the records, this call will be a no-op.
+     * 
+     * @param primaryKey the value identifying the record to be deleted
+     */
     public void delete(Object primaryKey)
     {
         BinaryEncoder encoder = new BinaryEncoder();
@@ -219,11 +269,27 @@ public class Config implements Iterable<JSONObject>
         }
     }
     
+    /**
+     * Delete the specified record from the configuration database. Note that
+     * the record is identified by the primary key. The underlying record will
+     * still be deleted even if parts of the record's data are different. 
+     * 
+     * If the record is not found, this call will be a no-op.
+     * 
+     * @param record the record to delete
+     */
     public void delete(JSONObject record)
     {
         delete(record.get(this.primaryKey));
     }
     
+    /**
+     * Inserts or updates a record in the configuration database. The record is
+     * updated if the primary key matches a record already in the underlying 
+     * data set.
+     * 
+     * @param record the record to insert or update
+     */
     public void insert(JSONObject record)
     {
         Object key = record.get(this.primaryKey);
