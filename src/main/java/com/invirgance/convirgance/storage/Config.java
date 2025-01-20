@@ -222,6 +222,28 @@ public class Config implements Iterable<JSONObject>
     }
     
     /**
+     * Retrieve the record matching the primary key value provided. Returns null
+     * if not found.
+     * 
+     * @param primaryKey the primary key value to look up
+     * @return the matching record or null if not found
+     */
+    public JSONObject getRecord(Object primaryKey)
+    {
+        JSONObject match = null;
+        
+        for(JSONObject record : this)
+        {
+            if(record.get(this.primaryKey).equals(primaryKey))
+            {
+                match = record;
+            }
+        }
+        
+        return match;
+    }
+    
+    /**
      * Delete the record that has the specified primary key. If the key is not
      * found in any of the records, this call will be a no-op.
      * 

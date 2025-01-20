@@ -277,4 +277,25 @@ public class ConfigTest
         
         assertEquals(expected.length, index);
     }
+    
+    @Test
+    public void testGetRecord()
+    {
+        
+        File directory = new File("target/tests/config/get/");
+        ClasspathSource source = new ClasspathSource("/database/drivers.json");
+        Config config;
+        
+        int index = 0;
+        
+        delete(directory);
+        
+        config = new Config(source, directory, "name");
+        
+        assertNotNull(config.getRecord("Oracle Thin Driver"));
+        assertEquals("Oracle Thin Driver", config.getRecord("Oracle Thin Driver").get("name"));
+        
+        assertNotNull(config.getRecord("HSQLDB"));
+        assertEquals("HSQLDB", config.getRecord("HSQLDB").get("name"));
+    }
 }
