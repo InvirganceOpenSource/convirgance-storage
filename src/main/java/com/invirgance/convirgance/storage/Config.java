@@ -22,8 +22,8 @@ SOFTWARE.
 package com.invirgance.convirgance.storage;
 
 import com.invirgance.convirgance.ConvirganceException;
-import com.invirgance.convirgance.bson.BinaryDecoder;
-import com.invirgance.convirgance.bson.BinaryEncoder;
+import com.invirgance.convirgance.jbin.BinaryDecoder;
+import com.invirgance.convirgance.jbin.BinaryEncoder;
 import com.invirgance.convirgance.input.InputCursor;
 import com.invirgance.convirgance.input.JSONInput;
 import com.invirgance.convirgance.json.JSONArray;
