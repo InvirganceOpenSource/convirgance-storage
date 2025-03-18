@@ -175,7 +175,8 @@ public class AtomicFile
         public void close() throws IOException
         {
             super.close();
-            
+            System.gc();
+
             old.delete();
             file.renameTo(old);
             temp.renameTo(file);
